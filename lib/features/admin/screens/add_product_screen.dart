@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:amazon_clone/common/widgets/custom_button.dart';
 import 'package:amazon_clone/common/widgets/custom_textfield.dart';
 import 'package:amazon_clone/constants/utils.dart';
+import 'package:amazon_clone/features/admin/services/admin_services.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController quantityController = TextEditingController();
+
+  final AdminService adminService = AdminService();
+  final _addProductFormKey = GlobalKey<FormState>();
   String category = 'Mobiles';
   List<String> productCategories = [
     'Mobiles',
@@ -36,6 +40,19 @@ class _AddProductScreenState extends State<AddProductScreen> {
     setState(() {
       images = res;
     });
+  }
+
+  void sellProduct() {
+    if (_addProductFormKey.currentState!.validate() && images.isNotEmpty) {
+      adminService.sellProduct(
+          context: context,
+          name: productNameController.text,
+          description: descriptionController.text,
+          price: double.parse(priceController.text),
+          quantity: double.parse(quantityController.text),
+          category: category,
+          images: images);
+    }
   }
 
   @override
@@ -65,6 +82,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
       ),
       body: SingleChildScrollView(
           child: Form(
+        key: _addProductFormKey,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Column(
@@ -177,8 +195,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
               ),
               CustomButton(
                 text: 'Sell',
-                onTap: () {},
-              )
+                onTap: sellProduct,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
             ],
           ),
         ),
