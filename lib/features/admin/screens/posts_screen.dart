@@ -25,6 +25,16 @@ class _PostsScreenState extends State<PostsScreen> {
     setState(() {});
   }
 
+  void deleteProduct(Product product, int index) {
+    adminService.deleteProduct(
+        context: context,
+        product: product,
+        onSuccess: () {
+          products!.removeAt(index);
+          setState(() {});
+        });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -58,7 +68,9 @@ class _PostsScreenState extends State<PostsScreen> {
                           maxLines: 2,
                         )),
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            deleteProduct(product, index);
+                          },
                           icon: const Icon(
                             Icons.delete_outline,
                           ),
