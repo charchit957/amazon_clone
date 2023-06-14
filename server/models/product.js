@@ -1,5 +1,6 @@
 const e = require("express");
 const mongose = require("mongoose");
+const ratingSchema = require("./ratings");
 const productSchema = new mongose.Schema({
   name: {
     type: String,
@@ -29,7 +30,7 @@ const productSchema = new mongose.Schema({
     type: String,
     required: true,
   },
-  //ratings
+  ratings: [ratingSchema],
 });
 
 const Product = mongose.model("Product", productSchema);
