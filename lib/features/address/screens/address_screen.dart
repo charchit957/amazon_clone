@@ -1,13 +1,20 @@
-import 'package:amazon_clone/common/widgets/custom_button.dart';
-import 'package:amazon_clone/common/widgets/custom_textfield.dart';
-import 'package:amazon_clone/constants/global_variables.dart';
+import 'package:amazon_clone/constants/utils.dart';
 import 'package:amazon_clone/provider/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:pay/pay.dart';
+
+import 'package:amazon_clone/common/widgets/custom_textfield.dart';
+import 'package:amazon_clone/constants/global_variables.dart';
+import 'package:amazon_clone/constants/payment_coniguration.dart';
 import 'package:provider/provider.dart';
 
 class AddressScreen extends StatefulWidget {
   static const routeName = '/address';
-  const AddressScreen({super.key});
+  final String totalAmount;
+  const AddressScreen({
+    Key? key,
+    required this.totalAmount,
+  }) : super(key: key);
 
   @override
   State<AddressScreen> createState() => _AddressScreenState();
@@ -20,6 +27,41 @@ class _AddressScreenState extends State<AddressScreen> {
   final TextEditingController cityController = TextEditingController();
 
   final _addreessFormKey = GlobalKey<FormState>();
+  List<PaymentItem> paymentItems = [];
+  String addressToBeUsed = "";
+  void onApplePayResult(result) {}
+  void onGooglePayResult(result) {}
+  void payPressed(String addressFromProvider) {
+    addressToBeUsed = "";
+    bool isForm = flatBuildingController.text.isNotEmpty ||
+        areaController.text.isNotEmpty ||
+        pincodeController.text.isNotEmpty ||
+        flatBuildingController.text.isNotEmpty;
+
+    if (isForm) {
+      if (_addreessFormKey.currentState!.validate()) {
+        addressToBeUsed =
+            "${flatBuildingController.text}, ${areaController.text}, ${cityController.text} - ${pincodeController.text}";
+      } else {
+        throw Exception('Please enter all the values!');
+      }
+    } else if (addressFromProvider.isNotEmpty) {
+      addressToBeUsed = addressFromProvider;
+    } else {
+      showSnackBar(context, 'ERROR');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    paymentItems.add(PaymentItem(
+      label: 'Total',
+      amount: widget.totalAmount,
+      status: PaymentItemStatus.final_price,
+    ));
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -31,8 +73,7 @@ class _AddressScreenState extends State<AddressScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // var address = context.watch<UserProvider>().user.address;
-    var address = 'Bhinder,Udaipur';
+    var address = context.watch<UserProvider>().user.address;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
@@ -98,6 +139,32 @@ class _AddressScreenState extends State<AddressScreen> {
                   ),
                   const SizedBox(height: 10),
                 ]),
+              ),
+              ApplePayButton(
+                onPressed: () => payPressed(address),
+                paymentConfiguration:
+                    PaymentConfiguration.fromJsonString(defaultApplePay),
+                onPaymentResult: onApplePayResult,
+                paymentItems: paymentItems,
+                width: double.infinity,
+                height: 50,
+                style: ApplePayButtonStyle.whiteOutline,
+                type: ApplePayButtonType.buy,
+                margin: const EdgeInsets.only(top: 15.0),
+              ),
+              GooglePayButton(
+                onPressed: () => payPressed(address),
+                paymentConfiguration:
+                    PaymentConfiguration.fromJsonString(defaultGooglePay),
+                paymentItems: paymentItems,
+                width: double.infinity,
+                height: 50,
+                type: GooglePayButtonType.buy,
+                margin: const EdgeInsets.only(top: 15.0),
+                onPaymentResult: onGooglePayResult,
+                loadingIndicator: const Center(
+                  child: CircularProgressIndicator(),
+                ),
               ),
             ],
           ),
