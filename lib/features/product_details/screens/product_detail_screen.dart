@@ -31,8 +31,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     Navigator.pushNamed(context, SearchScreen.routeName, arguments: query);
   }
 
+  void addToCart() {
+    productDetailsServices.addToCart(context: context, product: widget.product);
+  }
+
   double avgRating = 0;
   double myRating = 0;
+
   @override
   void initState() {
     super.initState();
@@ -44,10 +49,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         myRating = widget.product.ratings![i].rating;
       }
     }
-    if(totalRating!=0){
+    if (totalRating != 0) {
       avgRating = totalRating / widget.product.ratings!.length;
     }
-
   }
 
   @override
@@ -196,7 +200,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               padding: const EdgeInsets.all(10.0),
               child: CustomButton(
                   text: 'Add to Cart',
-                  onTap: () {},
+                  onTap: addToCart,
                   color: const Color.fromARGB(255, 246, 209, 22)),
             ),
             const SizedBox(

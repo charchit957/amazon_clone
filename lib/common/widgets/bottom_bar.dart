@@ -1,6 +1,8 @@
 import 'package:amazon_clone/constants/global_variables.dart';
 import 'package:amazon_clone/features/account/screens/account_screen.dart';
+import 'package:amazon_clone/provider/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../features/home/screens/home_screen.dart';
 
@@ -30,6 +32,7 @@ class _BottomBarState extends State<BottomBar> {
 
   @override
   Widget build(BuildContext context) {
+    final userCartLen = context.watch<UserProvider>().user.cart.length;
     return Scaffold(
       body: pages[_page],
       bottomNavigationBar: BottomNavigationBar(
@@ -85,15 +88,15 @@ class _BottomBarState extends State<BottomBar> {
                         width: bottomBarBorderWidth),
                   ),
                 ),
-                child: const Badge(
+                child: Badge(
                     backgroundColor: GlobalVariables.backgroundColor,
                     textColor: Colors.white,
                     label: Text(
-                      '2',
-                      style: TextStyle(
+                      userCartLen.toString(),
+                      style: const TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
-                    child: Icon(Icons.shopping_cart_outlined)),
+                    child: const Icon(Icons.shopping_cart_outlined)),
               ),
               label: ''),
         ],

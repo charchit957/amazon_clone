@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const authRouter = require("./routes/auth");
 const adminRouter = require("./routes/admin");
 const productRouter = require("./routes/product");
+const userRouter = require("./routes/user");
 
 //Inits
 const PORT = 3000;
@@ -13,11 +14,12 @@ const app = express();
 const DB =
   "mongodb+srv://charchit957:charchit957388@cluster0.ytl6zzc.mongodb.net/?retryWrites=true&w=majority";
 
-//middlewaresa
+//middlewares
 app.use(express.json());
 app.use(authRouter);
 app.use(adminRouter);
 app.use(productRouter);
+app.use(userRouter);
 //connections
 mongoose
   .connect(DB)
