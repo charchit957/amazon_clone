@@ -1,4 +1,5 @@
 import 'package:amazon_clone/constants/utils.dart';
+import 'package:amazon_clone/features/address/services/address_services.dart';
 import 'package:amazon_clone/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:pay/pay.dart';
@@ -28,9 +29,37 @@ class _AddressScreenState extends State<AddressScreen> {
 
   final _addreessFormKey = GlobalKey<FormState>();
   List<PaymentItem> paymentItems = [];
+  final AddressService addressService = AddressService();
   String addressToBeUsed = "";
-  void onApplePayResult(result) {}
-  void onGooglePayResult(result) {}
+
+  void onApplePayResult(result) {
+    if (Provider.of<UserProvider>(context, listen: false)
+        .user
+        .address
+        .isEmpty) {
+      addressService.saveUserAddress(
+          context: context, address: addressToBeUsed);
+    }
+    addressService.placeOrder(
+        context: context,
+        totalAmount: double.parse(widget.totalAmount),
+        address: addressToBeUsed);
+  }
+
+  void onGooglePayResult(result) {
+    if (Provider.of<UserProvider>(context, listen: false)
+        .user
+        .address
+        .isEmpty) {
+      addressService.saveUserAddress(
+          context: context, address: addressToBeUsed);
+    }
+    addressService.placeOrder(
+        context: context,
+        totalAmount: double.parse(widget.totalAmount),
+        address: addressToBeUsed);
+  }
+
   void payPressed(String addressFromProvider) {
     addressToBeUsed = "";
     bool isForm = flatBuildingController.text.isNotEmpty ||
@@ -42,6 +71,7 @@ class _AddressScreenState extends State<AddressScreen> {
       if (_addreessFormKey.currentState!.validate()) {
         addressToBeUsed =
             "${flatBuildingController.text}, ${areaController.text}, ${cityController.text} - ${pincodeController.text}";
+        
       } else {
         throw Exception('Please enter all the values!');
       }
