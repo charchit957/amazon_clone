@@ -33,7 +33,7 @@ class ProductDetailsServices {
           context: context,
           onSuccess: () {
             User user =
-                userProvider.user.copyWith(cart: jsonDecode(res.body)['cart']);
+                userProvider.user.copyWith(cart: jsonDecode(res.body)['user']['cart']);
             userProvider.setUserFromModel(user);
           });
     } catch (e) {

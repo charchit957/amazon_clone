@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:amazon_clone/common/widgets/loader.dart';
 import 'package:amazon_clone/features/home/services/home_services.dart';
 import 'package:amazon_clone/features/product_details/screens/product_detail_screen.dart';
@@ -59,8 +57,8 @@ class _DealOfDayState extends State<DealOfDay> {
                     Container(
                       alignment: Alignment.topLeft,
                       padding: const EdgeInsets.only(left: 15),
-                      child: const Text('\$ 1,299.00',
-                          style: TextStyle(
+                      child: Text('\$${product!.price}',
+                          style: const TextStyle(
                             fontSize: 20,
                           )),
                     ),
@@ -68,8 +66,8 @@ class _DealOfDayState extends State<DealOfDay> {
                       alignment: Alignment.topLeft,
                       padding:
                           const EdgeInsets.only(left: 15, top: 5, right: 40),
-                      child: const Text(
-                        'MacBook',
+                      child: Text(
+                        product!.name,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 2,
                       ),
