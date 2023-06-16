@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-String uri = 'http://192.168.188.10:3000';
+String uri = 'https://amazon-clone-server-adwsun9tk-charchit957.vercel.app';
 
 class GlobalVariables {
   // COLORS
