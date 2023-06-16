@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:amazon_clone/constants/error_handling.dart';
 import 'package:amazon_clone/constants/global_variables.dart';
 import 'package:amazon_clone/constants/utils.dart';
+import 'package:amazon_clone/features/admin/model/sales.dart';
 import 'package:amazon_clone/models/order.dart';
 import 'package:amazon_clone/models/product.dart';
 import 'package:amazon_clone/provider/user_provider.dart';
@@ -157,10 +158,7 @@ class AdminService {
                 'Content-Type': 'application/json; charset=UTF-8',
                 'x-auth-token': user.token,
               },
-              body: jsonEncode({
-                'id': order.id,
-                'status':status
-              }));
+              body: jsonEncode({'id': order.id, 'status': status}));
       httpErrorHandle(
           res: res,
           context: context,
@@ -170,5 +168,36 @@ class AdminService {
     } catch (e) {
       showSnackBar(context, e.toString());
     }
+  }
+
+  //analytics
+  Future<Map<String, dynamic>> getEarnings(BuildContext context) async {
+    final user = Provider.of<UserProvider>(context, listen: false).user;
+    List<Sales> sales = [];
+    int totalEarning = 0;
+    try {
+      http.Response res =
+          await http.get(Uri.parse('$uri/admin/analytics'), headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'x-auth-token': user.token,
+      });
+      httpErrorHandle(
+          res: res,
+          context: context,
+          onSuccess: () {
+            var response = jsonDecode(res.body);
+            totalEarning = response['totalEarning'];
+            sales = [
+              Sales("Mobiles", response['mobileEarning']),
+              Sales("Appliances", response['applianceEarning']),
+              Sales("Essentials", response['essentialEarning']),
+              Sales("Books", response['booksEarning']),
+              Sales("Fashion", response['fashionEarning'])
+            ];
+          });
+    } catch (e) {
+      showSnackBar(context, e.toString());
+    }
+    return {'sales': sales, 'totalEarning': totalEarning};
   }
 }
