@@ -9,7 +9,7 @@ const productRouter = require("./routes/product");
 const userRouter = require("./routes/user");
 
 //Inits
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const app = express();
 const DB =
   "mongodb+srv://charchit957:charchit957388@cluster0.ytl6zzc.mongodb.net/?retryWrites=true&w=majority";
