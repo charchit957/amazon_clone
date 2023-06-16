@@ -1,9 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:amazon_clone/common/widgets/custom_button.dart';
 import 'package:amazon_clone/constants/global_variables.dart';
+import 'package:amazon_clone/features/admin/services/admin_services.dart';
 import 'package:amazon_clone/features/search/screens/search_screen.dart';
 import 'package:amazon_clone/models/order.dart';
+import 'package:amazon_clone/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
   static const routeName = '/order-details';
@@ -19,6 +23,7 @@ class OrderDetailsScreen extends StatefulWidget {
 
 class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   int currentStep = 0;
+  final AdminService adminService = AdminService();
   void navigateToSearchScreen(String query) {
     Navigator.pushNamed(context, SearchScreen.routeName, arguments: query);
   }
@@ -29,8 +34,23 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     currentStep = widget.order.status;
   }
 
+//!!!ONLY FOR ADMIN!!!
+  void changeOrderStatus(int status) {
+    adminService.changeOrderStatus(
+      context: context,
+      status: status + 1,
+      order: widget.order,
+      onSuccess: () {
+          currentStep += 1;
+        setState(() {
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<UserProvider>().user;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
@@ -176,7 +196,16 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               ),
               child: Stepper(
                   currentStep: currentStep,
-                  controlsBuilder: (context, details) => (const SizedBox()),
+                  controlsBuilder: (context, details) {
+                    if (user.type == 'admin') {
+                      return CustomButton(
+                        text: 'Done',
+                        onTap: () => changeOrderStatus(details.currentStep),
+                      );
+                    } else {
+                      return const SizedBox();
+                    }
+                  },
                   steps: [
                     Step(
                         title: const Text('Pending'),
