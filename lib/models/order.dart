@@ -11,6 +11,8 @@ class Order {
   final String userId;
   final int orderedAt;
   final int status;
+  final double totalPrice;
+
   Order({
     required this.id,
     required this.products,
@@ -19,6 +21,7 @@ class Order {
     required this.userId,
     required this.orderedAt,
     required this.status,
+    required this.totalPrice,
   });
 
   Map<String, dynamic> toMap() {
@@ -30,6 +33,7 @@ class Order {
       'userId': userId,
       'orderedAt': orderedAt,
       'status': status,
+      'totalPricce': totalPrice
     };
   }
 
@@ -47,7 +51,9 @@ class Order {
         ),
         quantity: List<int>.from(
           (map['products'].map((x) => x['quantity'])),
-        ));
+        ),
+        totalPrice:double.parse( map['totalPrice'].toString())
+        );
   }
 
   String toJson() => json.encode(toMap());
